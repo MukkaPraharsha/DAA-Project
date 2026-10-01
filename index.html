@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sort Lab — Sorting Algorithm Visualizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Sort Lab</h1>
+      <p>Build an array, pick one or more algorithms, and watch every comparison and swap happen in real time.</p>
+    </div>
+  </header>
+
+  <!-- Step 1: array input -->
+  <div class="panel">
+    <h2>1 · Build the array</h2>
+    <div class="row" style="margin-bottom:12px;">
+      <div class="seg" id="modeSeg">
+        <button data-mode="random" class="active">Random</button>
+        <button data-mode="manual">Manual</button>
+        <button data-mode="preset">Preset</button>
+      </div>
+    </div>
+    <div id="modeRandom" class="row">
+      <div class="field">
+        <label>Array size — <span id="sizeVal" class="mono">16</span></label>
+        <input type="range" id="sizeSlider" min="5" max="60" value="16">
+      </div>
+      <button class="btn primary" id="genRandomBtn">Generate</button>
+    </div>
+    <div id="modeManual" class="row" style="display:none;">
+      <div class="field grow">
+        <label>Comma-separated values (0–99)</label>
+        <input type="text" id="manualInput" placeholder="e.g. 42, 7, 88, 15, 63, 3, 91">
+      </div>
+      <button class="btn primary" id="applyManualBtn">Apply</button>
+    </div>
+    <div id="modePreset" class="row" style="display:none;">
+      <div class="field">
+        <label>Preset pattern</label>
+        <select id="presetSelect">
+          <option value="sorted">Already sorted</option>
+          <option value="reverse">Reverse sorted</option>
+          <option value="nearly">Nearly sorted (few swaps needed)</option>
+          <option value="few">Few unique values (many duplicates)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Size — <span id="sizePresetVal" class="mono">16</span></label>
+        <input type="range" id="sizePresetSlider" min="5" max="60" value="16">
+      </div>
+      <button class="btn primary" id="genPresetBtn">Generate</button>
+    </div>
+    <div class="hint" id="arrayHint"></div>
+  </div>
+
+  <!-- Step 2: algorithm selection (chips are created by script.js) -->
+  <div class="panel">
+    <h2>2 · Choose algorithm(s)</h2>
+    <div class="chips" id="algoChips"></div>
+    <div class="hint">Pick one algorithm for a full-size single view, or two+ for a side-by-side race on the same array.</div>
+  </div>
+
+  <!-- Step 3: playback controls -->
+  <div class="panel">
+    <h2>3 · Run</h2>
+    <div class="row">
+      <div class="field">
+        <label>Speed — <span id="speedVal" class="mono">step-by-step</span></label>
+        <input type="range" id="speedSlider" min="1" max="100" value="25">
+      </div>
+      <button class="btn primary" id="startBtn">▶ Start visualization</button>
+      <button class="btn" id="pauseBtn" disabled>Pause</button>
+      <button class="btn" id="stepBtn">Step ▸ once</button>
+      <button class="btn danger" id="resetBtn">Reset</button>
+    </div>
+    <div class="hint">Slower speeds and "Step once" make each individual comparison and swap easy to follow — good for actually explaining the algorithm.</div>
+  </div>
+
+  <div class="statsbar" id="statsBar"></div>
+
+  <!-- Single-algorithm view -->
+  <div class="stage" id="singleStage">
+    <div class="stage-head"><span id="singleAlgoName">—</span><span id="singleStatus" class="mono">idle</span></div>
+    <canvas id="singleCanvas"></canvas>
+    <div class="legend">
+      <span><i class="l-idle"></i>unsorted</span>
+      <span><i class="l-compare"></i>comparing</span>
+      <span><i class="l-swap"></i>swapping</span>
+      <span><i class="l-pivot"></i>pivot</span>
+      <span><i class="l-sorted"></i>sorted</span>
+    </div>
+
+    <div class="stepBox" id="stepBox">
+      <div class="stepBox-head">
+        <span class="mono" id="stepCounter">Step 0 / 0</span>
+      </div>
+      <div id="stepDesc" class="stepDesc">Press Start to begin the walkthrough.</div>
+    </div>
+
+    <div class="arrayBox">
+      <div class="arrayBox-head">Current array</div>
+      <div id="liveArray" class="mono liveArray">—</div>
+      <div class="row" style="margin-top:8px;gap:20px;">
+        <span class="mono" style="font-size:12.5px;color:var(--compare);">Comparisons: <b id="liveCompare">0</b></span>
+        <span class="mono" style="font-size:12.5px;color:var(--swap);">Swaps/writes: <b id="liveSwap">0</b></span>
+        <span class="mono" style="font-size:12.5px;color:var(--muted);">Step: <b id="liveStep">0 / 0</b></span>
+      </div>
+    </div>
+
+    <div class="stepLogPanel">
+      <div class="stepLogPanel-head"><span>All steps</span><span class="mono" id="stepLogCount">0 steps</span></div>
+      <div id="stepLog" class="stepLog"><div class="stepLogRow pending"><span class="idx">—</span><span class="desc">Press Start or Step once to generate the full step-by-step trace for this algorithm.</span></div></div>
+    </div>
+
+    <div id="singleResult" class="hint mono" style="display:none;margin-top:10px;font-size:13px;color:var(--text);word-break:break-word;"></div>
+  </div>
+
+  <!-- Race view (shown when 2+ algorithms are selected) -->
+  <div class="stage" id="raceStage" style="display:none;">
+    <div class="stage-head"><span>Performance race</span><span id="raceStatus" class="mono">idle</span></div>
+    <div class="raceGrid" id="raceGrid"></div>
+  </div>
+
+  <div class="panel" id="leaderPanel" style="display:none;">
+    <h2>Results — fastest to finish</h2>
+    <table class="leadBoard"><thead><tr><th>#</th><th>Algorithm</th><th>Comparisons</th><th>Writes/Swaps</th><th>Steps</th><th>Time</th></tr></thead><tbody id="leaderBody"></tbody></table>
+    <div id="raceResult" class="hint mono" style="margin-top:10px;font-size:13px;color:var(--text);word-break:break-word;"></div>
+  </div>
+
+  <!-- Complexity reference (rows are created by script.js) -->
+  <div class="panel">
+    <h2>Time &amp; space complexity reference</h2>
+    <table id="complexityTable">
+      <thead><tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th><th>Stable</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="footer">Built as a portfolio mini-project · vanilla JS, no libraries · runs entirely client-side</div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
