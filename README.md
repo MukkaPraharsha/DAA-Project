@@ -4,29 +4,7 @@
 
 Built with **HTML + CSS + vanilla JavaScript only** — no frameworks, no libraries, no backend. It runs completely in the browser.
 
----
 
-## 📑 Table of Contents
-
-1. [About the Project](#1--about-the-project)
-2. [Why I Built This](#2--why-i-built-this)
-3. [Features](#3--features)
-4. [Tech Stack](#4--tech-stack)
-5. [Project Structure](#5--project-structure)
-6. [How to Run (Step by Step)](#6--how-to-run-step-by-step)
-7. [How to Use the App (Step by Step)](#7--how-to-use-the-app-step-by-step)
-8. [Algorithms Included](#8--algorithms-included)
-9. [Complexity Table](#9--complexity-table)
-10. [How the Code Works (Step by Step)](#10--how-the-code-works-step-by-step)
-11. [Color Legend](#11--color-legend)
-12. [Race Mode Explained](#12--race-mode-explained)
-13. [Deploy on GitHub Pages](#13--deploy-on-github-pages)
-14. [Known Limitations](#14--known-limitations)
-15. [Future Improvements](#15--future-improvements)
-16. [What I Learned](#16--what-i-learned)
-17. [Author](#17--author)
-
----
 
 ## 1. 📖 About the Project
 
