@@ -416,14 +416,5 @@ git push -u origin main
 - Designing a responsive layout with CSS Flexbox, Grid, and CSS variables.
 - Organising a project into HTML (structure), CSS (style), and JS (behaviour).
 
----
 
-## 17. 👤 Author
 
-**Manish Ranganayakula**
-B.Tech Computer Science, Sree Chaitanya College of Engineering
-
-- 🔗 LinkedIn: [linkedin.com/in/manishranganayakula](https://linkedin.com/in/manishranganayakula)
-- 💻 GitHub: [github.com/ManishRanganayakula](https://github.com/ManishRanganayakula)
-
-⭐ If you found this project useful, please give it a star on GitHub!
